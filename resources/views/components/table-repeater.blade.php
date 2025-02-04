@@ -46,11 +46,42 @@
         || $moveUpAction->isVisible()
         || $moveDownAction->isVisible()
         || filled($visibleExtraItemActions);
+
+    $tableId = 'table-repeat-'.rand(2,999);
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
-        x-data="{}"
+        x-data="{
+            adjustColspan() {
+                let rows = document.querySelectorAll('#{{ $tableId }} tbody tr');
+                console.log(rows,'#{{ $tableId }}');
+                let maxCols = 0;
+                rows.forEach(row => {
+                    let colCount = row.querySelectorAll('td').length;
+                    if (colCount > maxCols) {
+                    maxCols = colCount;
+                    }
+                });
+                
+                rows.forEach(row => {
+                    let colCount = row.querySelectorAll('td').length;
+                    if (colCount < maxCols) {
+                    let firstCell = row.cells[1]; 
+                    firstCell.setAttribute('colspan', (maxCols - 2)); 
+                    
+                    // for (let i = 1; i < row.cells.length; i++) {
+                    //     row.deleteCell(1);
+                    // }
+                    }
+                });
+            },
+
+            init() {
+                this.adjustColspan();
+            }
+        }"
+        x-on:settabletitle.window="adjustColspan()"
         {{ $attributes->merge($getExtraAttributes())->class([
             'table-repeater-component space-y-6 relative',
             'streamlined' => $streamlined,
@@ -65,7 +96,7 @@
     >
         @if (count($containers) || $emptyLabel !== false)
             <div class="table-repeater-container rounded-xl relative ring-1 ring-gray-950/5 dark:ring-white/20">
-                <table class="w-full">
+                <table class="w-full" id="{{ $tableId }}">
                     <thead @class([
                         'table-repeater-header-hidden sr-only' => ! $renderHeader,
                         'table-repeater-header rounded-t-xl overflow-hidden border-b border-gray-950/5 dark:border-white/20' => $renderHeader,
