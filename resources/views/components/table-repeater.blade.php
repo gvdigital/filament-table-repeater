@@ -47,7 +47,7 @@
         || $moveDownAction->isVisible()
         || filled($visibleExtraItemActions);
 
-    $tableId = 'table-repeat-'.rand(2,999);
+    $tableId = 'table-repeat-'.$statePath;
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
@@ -55,7 +55,6 @@
         x-data="{
             adjustColspan() {
                 let rows = document.querySelectorAll('#{{ $tableId }} tbody tr');
-                console.log(rows,'#{{ $tableId }}');
                 let maxCols = 0;
                 rows.forEach(row => {
                     let colCount = row.querySelectorAll('td').length;
@@ -63,16 +62,11 @@
                     maxCols = colCount;
                     }
                 });
-                
                 rows.forEach(row => {
                     let colCount = row.querySelectorAll('td').length;
                     if (colCount < maxCols) {
                     let firstCell = row.cells[1]; 
                     firstCell.setAttribute('colspan', (maxCols - 2)); 
-                    
-                    // for (let i = 1; i < row.cells.length; i++) {
-                    //     row.deleteCell(1);
-                    // }
                     }
                 });
             },
