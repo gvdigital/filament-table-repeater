@@ -47,7 +47,8 @@
         || $moveDownAction->isVisible()
         || filled($visibleExtraItemActions);
 
-    $tableId = 'table-repeat-'.$statePath;
+    $tid = str_replace('.', '_', $statePath);
+    $tableId = 'table-repeat-'. $tid;
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
@@ -59,16 +60,18 @@
                 rows.forEach(row => {
                     let colCount = row.querySelectorAll('td').length;
                     if (colCount > maxCols) {
-                    maxCols = colCount;
+                        maxCols = colCount;
                     }
                 });
-                rows.forEach(row => {
-                    let colCount = row.querySelectorAll('td').length;
-                    if (colCount < maxCols) {
-                    let firstCell = row.cells[1]; 
-                    firstCell.setAttribute('colspan', (maxCols - 2)); 
-                    }
-                });
+                setTimeout(() => {
+                    rows.forEach(row => {
+                        let colCount = row.querySelectorAll('td').length;
+                        if (colCount < maxCols) {
+                            let firstCell = row.cells[1];
+                            firstCell.setAttribute('colspan', (maxCols - 2));
+                        } 
+                    });
+                }, 1);
             },
 
             init() {
@@ -106,9 +109,9 @@
                                       default => 'text-start'
                                     }
                                 ])
-                                style="width: {{ $header->getWidth() }}"
+                                
                             >
-                                {{ $header->getLabel() }}
+                                {{ $header->name }}
                                 @if ($header->isRequired())
                                     <span class="whitespace-nowrap">
                                         <sup class="font-medium text-danger-700 dark:text-danger-400">*</sup>
